@@ -1,16 +1,44 @@
-import net.fabricmc.loom.task.RemapJarTask
-
-plugins {
-    id 'fabric-loom' version '0.5-SNAPSHOT'
-    id 'maven-publish'
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url = 'https://files.minecraftforge.net/maven'
+        }
+        maven {
+            url = 'https://repo.spongepowered.org/maven'
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:4.0.15'
+        classpath 'org.spongepowered:mixingradle:0.7-SNAPSHOT'
+    }
 }
+
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
 minecraft {
-    accessWidener = file("src/main/resources/lithium.accesswidener")
-    refmapName = "mixins.lithium.refmap.json"
+    mappings channel: 'snapshot', version: project.mcp_version
+
+    accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
+
+    runs {
+        client {
+            workingDirectory project.file('run')
+            arg '-mixin.config=lithium.mixins.json'
+
+            mods {
+                lithiumforge {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
-apply plugin: 'fabric-loom'
+mixin {
+    add sourceSets.main, 'lithium.refmap.json'
+}
 
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
@@ -47,10 +75,10 @@ sourceSets {
 
 dependencies {
     //to change the versions see the gradle.properties file
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
+    minecraft "net.minecraftforge:forge:${project.minecraft_version}-${project.forge_version}"
 
-    modCompile "net.fabricmc:fabric-loader:${project.loader_version}"
+    //mixin
+    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
 }
 
 processResources {
@@ -80,31 +108,12 @@ tasks.withType(Jar) {
     from sourceSets.api.output
 }
 
-task apiJar(type: Jar) {
-    classifier "api-dev"
-
-    from sourceSets.api.output
-}
-
-task remapApiJar(type: RemapJarTask, dependsOn: apiJar) {
-    classifier "api"
-
-    input = apiJar.archiveFile.get().asFile
-    addNestedDependencies = false
-}
-
-publishing {
-    publications {
-        main (MavenPublication) {
-            artifactId "lithium"
-            artifact(remapJar)
-        }
-
-        api (MavenPublication) {
-            artifactId "lithium-api"
-            artifact(remapApiJar)
-        }
+jar {
+    manifest {
+        attributes([
+                "MixinConfigs": "lithium.mixins.json"
+        ])
     }
 }
 
-build.dependsOn remapApiJar
+jar.finalizedBy('reobfJar')
