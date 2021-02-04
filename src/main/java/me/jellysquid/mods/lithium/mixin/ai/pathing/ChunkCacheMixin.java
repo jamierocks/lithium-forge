@@ -4,10 +4,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.Region;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.ChunkCache;
 import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.IChunk;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -21,24 +21,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * avoid slow paths in the game and to better inline code. In testing, it shows a small improvement in path-finding
  * code.
  */
-@Mixin(ChunkCache.class)
+@Mixin(Region.class)
 public class ChunkCacheMixin {
     private static final BlockState DEFAULT_BLOCK = Blocks.AIR.getDefaultState();
 
     @Shadow
     @Final
-    protected Chunk[][] chunks;
+    protected IChunk[][] chunks;
 
     @Shadow
     @Final
-    protected int minX;
+    protected int chunkX;
 
     @Shadow
     @Final
-    protected int minZ;
+    protected int chunkZ;
 
     // A 1D view of the chunks available to this cache
-    private Chunk[] chunksFlat;
+    private IChunk[] chunksFlat;
 
     // The x/z length of this cache
     private int xLen, zLen;
@@ -48,7 +48,7 @@ public class ChunkCacheMixin {
         this.xLen = 1 + (maxPos.getX() >> 4) - (minPos.getX() >> 4);
         this.zLen = 1 + (maxPos.getZ() >> 4) - (minPos.getZ() >> 4);
 
-        this.chunksFlat = new Chunk[this.xLen * this.zLen];
+        this.chunksFlat = new IChunk[this.xLen * this.zLen];
 
         // Flatten the 2D chunk array into our 1D array
         for (int x = 0; x < this.xLen; x++) {
@@ -64,19 +64,19 @@ public class ChunkCacheMixin {
     public BlockState getBlockState(BlockPos pos) {
         int y = pos.getY();
 
-        if (!World.isOutOfBuildLimitVertically(pos.getY())) {
+        if (!World.isYOutOfBounds(pos.getY())) {
             int x = pos.getX();
             int z = pos.getZ();
 
-            int chunkX = (x >> 4) - this.minX;
-            int chunkZ = (z >> 4) - this.minZ;
+            int chunkX = (x >> 4) - this.chunkX;
+            int chunkZ = (z >> 4) - this.chunkZ;
 
             if (chunkX >= 0 && chunkX < this.xLen && chunkZ >= 0 && chunkZ < this.zLen) {
-                Chunk chunk = this.chunksFlat[(chunkX * this.zLen) + chunkZ];
+                IChunk chunk = this.chunksFlat[(chunkX * this.zLen) + chunkZ];
 
                 // Avoid going through Chunk#getBlockState
                 if (chunk != null) {
-                    ChunkSection section = chunk.getSectionArray()[y >> 4];
+                    ChunkSection section = chunk.getSections()[y >> 4];
 
                     if (section != null) {
                         return section.getBlockState(x & 15, y & 15, z & 15);
