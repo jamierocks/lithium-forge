@@ -2,6 +2,7 @@ package me.jellysquid.mods.lithium.mixin.entity.gravity_check_block_below;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.util.AxisRotation;
+import net.minecraft.util.Direction;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.ISelectionContext;
 import net.minecraft.util.math.shapes.VoxelShape;

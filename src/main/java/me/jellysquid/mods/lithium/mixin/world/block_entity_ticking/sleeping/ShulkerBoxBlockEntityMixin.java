@@ -29,7 +29,7 @@ public abstract class ShulkerBoxBlockEntityMixin extends TileEntity {
 
     @Inject(method = "tick", at = @At("RETURN"))
     private void checkSleep(CallbackInfo ci) {
-        if (this.getAnimationStatus() == ShulkerBoxBlockEntity.AnimationStage.CLOSED && this.progressOld == 0f &&
+        if (this.getAnimationStatus() == ShulkerBoxTileEntity.AnimationStatus.CLOSED && this.progressOld == 0f &&
                 this.progress == 0f && this.world != null) {
             ((BlockEntitySleepTracker)this.world).setAwake(this, false);
         }

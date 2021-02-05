@@ -1,4 +1,5 @@
 {
+  "minVersion": "0.8",
   "package": "me.jellysquid.mods.lithium.mixin",
   "refmap": "lithium.refmap.json",
   "required": true,

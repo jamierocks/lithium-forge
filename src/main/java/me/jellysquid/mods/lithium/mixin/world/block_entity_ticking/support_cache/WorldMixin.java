@@ -57,7 +57,7 @@ public class WorldMixin {
             )
     )
     private TileEntityType<?> getNullIfSupported(TileEntity blockEntity) {
-        return ((SupportCache) blockEntity).isSupported() ? null : BlockEntityType.BANNER;
+        return ((SupportCache) blockEntity).isSupported() ? null : TileEntityType.BANNER;
     }
     @Redirect(
             method = "tickBlockEntities",
