@@ -49,7 +49,7 @@ public class LithiumServerTickScheduler<T> extends ServerTickList<T> {
     private final Map<NextTickListEntry<T>, TickEntry<T>> scheduledTicks = new HashMap<>();
     private final ArrayList<TickEntry<T>> executingTicks = new ArrayList<>();
 
-    private final Predicate<T> invalidObjPredicate;
+    private final Predicate<T> filter;
     private final ServerWorld world;
     private final Consumer<NextTickListEntry<T>> tickConsumer;
 

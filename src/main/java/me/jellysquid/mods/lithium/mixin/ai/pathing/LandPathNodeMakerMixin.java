@@ -4,6 +4,7 @@ import me.jellysquid.mods.lithium.common.ai.pathing.PathNodeCache;
 import me.jellysquid.mods.lithium.common.world.WorldHelper;
 import net.minecraft.block.BlockState;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.pathfinding.PathType;
 import net.minecraft.pathfinding.WalkNodeProcessor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -37,7 +38,7 @@ public abstract class LandPathNodeMakerMixin {
             // This is only ever called in vanilla after all other possibilities are exhausted, but before fluid checks
             // It should be safe to perform it last in actuality and take advantage of the cache for fluid types as well
             // since fluids will always pass this check.
-            if (!blockState.allowsMovement(blockView, blockPos, NavigationType.LAND)) {
+            if (!blockState.allowsMovement(blockView, blockPos, PathType.LAND)) {
                 return PathNodeType.BLOCKED;
             }
 

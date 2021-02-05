@@ -4,6 +4,8 @@ import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
 
 public class PathNodeDefaults {
     public static PathNodeType getNeighborNodeType(BlockState state) {

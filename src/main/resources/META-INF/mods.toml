@@ -1,0 +1,14 @@
+modLoader="javafml"
+loaderVersion="[36,)"
+license="LGPL-3.0-only"
+
+[[mods]]
+modId="lithium"
+displayName="Lithium (for Minecraft Forge)"
+version="${file.jarVersion}"
+authors="Jamie Mansfield"
+description='''
+Lithium is a free and open-source optimization mod for Minecraft which makes a wide range of performance improvements to the game.
+
+This is a port of Lithium for Minecraft Forge, developed by a third-party. Please send bug reports to the appropriate places.
+'''
