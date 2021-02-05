@@ -19,6 +19,8 @@ public abstract class EntityMixin {
     @Shadow
     protected abstract int getFireImmuneTicks();
 
+    // lithium-forge: need to investigate this one, I can't see the target in Entity#move
+    /*
     @Redirect(
             method = "move",
             at = @At(
@@ -34,4 +36,5 @@ public abstract class EntityMixin {
 
         return world.getStatesInArea(box);
     }
+     */
 }

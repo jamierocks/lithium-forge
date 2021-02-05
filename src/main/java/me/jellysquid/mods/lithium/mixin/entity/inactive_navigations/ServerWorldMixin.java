@@ -78,6 +78,8 @@ public abstract class ServerWorldMixin extends World implements ServerWorldExten
         return navigation;
     }
 
+    // lithium-forge: Minecraft Forge has a patch that seems equivalent on the surface
+    /*
     @Redirect(
             method = "onEntityRemoved",
             at = @At(
@@ -93,6 +95,7 @@ public abstract class ServerWorldMixin extends World implements ServerWorldExten
         }
         return navigation;
     }
+     */
 
     /**
      * Optimization: Only update listeners that may care about the update. Listeners which have no path

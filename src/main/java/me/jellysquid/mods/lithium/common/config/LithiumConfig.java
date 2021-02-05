@@ -27,7 +27,10 @@ public class LithiumConfig {
         this.addMixinRule("ai.goal", true);
         this.addMixinRule("ai.nearby_entity_tracking", true);
         this.addMixinRule("ai.nearby_entity_tracking.goals", true);
-        this.addMixinRule("ai.pathing", true);
+        // lithium-forge: disable mixins
+        // it seems that Forge makes tags available for use later than vanilla, which causes issues
+        // with the cached values used by Lithium.
+        this.addMixinRule("ai.pathing", false);
         this.addMixinRule("ai.poi", true);
         this.addMixinRule("ai.poi.fast_init", true);
         this.addMixinRule("ai.poi.fast_retrieval", true);

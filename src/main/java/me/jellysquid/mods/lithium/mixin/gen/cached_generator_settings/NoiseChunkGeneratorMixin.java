@@ -31,9 +31,15 @@ public class NoiseChunkGeneratorMixin {
     @Inject(
             method = "<init>(Lnet/minecraft/world/biome/provider/BiomeProvider;Lnet/minecraft/world/biome/provider/BiomeProvider;JLjava/util/function/Supplier;)V",
             at = @At(
+                    "RETURN"
+                    // lithium-forge: Mixin doesn't support injecting in arbitrary places in constructors
+                    // this is functionality added by a fork.
+                    // It seems safe to inject at "RETURN", so that's what I've gone with.
+                    /*
                     value = "INVOKE",
                     target = "Lnet/minecraft/world/gen/DimensionSettings;getNoise()Lnet/minecraft/world/gen/settings/NoiseSettings;",
                     shift = At.Shift.BEFORE
+                     */
             )
     )
     private void hookConstructor(BiomeProvider populationSource, BiomeProvider biomeSource, long seed, Supplier<DimensionSettings> settings, CallbackInfo ci) {

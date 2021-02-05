@@ -38,6 +38,9 @@ public abstract class PistonBlockEntityMixin {
      * Avoid calling {@link VoxelShapes#or(VoxelShape, VoxelShape)} whenever possible - use precomputed merged piston head + base shapes and
      * cache the results for all union calls with an empty shape as first argument. (these are all other cases)
      */
+    // lithium-forge: Mixin doesn't seem to be able to get the 'float f' parameter, I'm guessing this is another
+    // fork addition.
+    /*
     @Inject(
             method = "getCollisionShape",
             at = @At(
@@ -63,6 +66,7 @@ public abstract class PistonBlockEntityMixin {
             cir.setReturnValue(PISTON_BASE_WITH_MOVING_HEAD_SHAPES[index]);
         }
     }
+     */
 
     /**
      * We cache the offset and simplified VoxelShapes that are otherwise constructed on every call of getCollisionShape.

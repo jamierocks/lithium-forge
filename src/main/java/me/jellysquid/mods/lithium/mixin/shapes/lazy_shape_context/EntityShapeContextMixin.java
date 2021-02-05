@@ -50,9 +50,15 @@ public class EntityShapeContextMixin {
     @Inject(
             method = "<init>(Lnet/minecraft/entity/Entity;)V",
             at = @At(
+                    "RETURN"
+                    // lithium-forge: Mixin doesn't support injecting in arbitrary places in constructors
+                    // this is functionality added by a fork.
+                    // It seems safe to inject at "RETURN", so that's what I've gone with.
+                    /*
                     value = "INVOKE",
                     target = "Lnet/minecraft/util/math/shapes/EntitySelectionContext;<init>(ZDLnet/minecraft/item/Item;Ljava/util/function/Predicate;)V",
                     shift = At.Shift.AFTER
+                     */
             )
     )
     private void initFields(Entity entity, CallbackInfo ci) {
