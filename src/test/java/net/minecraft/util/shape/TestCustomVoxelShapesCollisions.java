@@ -2,9 +2,10 @@ package net.minecraft.util.shape;
 
 import me.jellysquid.mods.lithium.common.shapes.VoxelShapeAlignedCuboid;
 import me.jellysquid.mods.lithium.mixin.shapes.specialized_shapes.VoxelShapesMixin;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.Direction;
-
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.util.math.shapes.VoxelShapes;
 import java.util.Random;
 
 /**
@@ -34,7 +35,7 @@ public class TestCustomVoxelShapesCollisions {
 
     public Random rand;
     public double[] distances;
-    private Box[] boxes;
+    private AxisAlignedBB[] boxes;
 
 //    @Test
     public void testCollisions() {
@@ -50,9 +51,9 @@ public class TestCustomVoxelShapesCollisions {
         this.rand.setSeed(seed);
         this.randomSeed = seed;
 
-        this.boxes = new Box[20];
-        this.boxes[0] = new Box(0.2931994021407849, 0.5175531777466607, 0.14575020167685837, 1.4562191976519117, 2.2389429614133496, 0.31827209851790766);
-        this.boxes[1] = new Box(0.5 - 0.5E-7, 0.75, 0.125 + 1E-7, 1, 1+1E-6, 0.5);
+        this.boxes = new AxisAlignedBB[20];
+        this.boxes[0] = new AxisAlignedBB(0.2931994021407849, 0.5175531777466607, 0.14575020167685837, 1.4562191976519117, 2.2389429614133496, 0.31827209851790766);
+        this.boxes[1] = new AxisAlignedBB(0.5 - 0.5E-7, 0.75, 0.125 + 1E-7, 1, 1+1E-6, 0.5);
         for (int i = 2; i < 20; i++) {
             this.boxes[i] = getRandomBox(this.rand);
         }
@@ -68,17 +69,17 @@ public class TestCustomVoxelShapesCollisions {
                     for(int y2 = y + 1; y2 <= 8; y2++) {
                         for (int z = 0; z <= 7; z++) {
                             for(int z2 = z + 1; z2 <= 8; z2++) {
-                                VoxelShape[] pair = getVanillaModdedVoxelShapePair(new Box(x/8D,y/8D,z/8D,x2/8D,y2/8D,z2/8D));
+                                VoxelShape[] pair = getVanillaModdedVoxelShapePair(new AxisAlignedBB(x/8D,y/8D,z/8D,x2/8D,y2/8D,z2/8D));
                                 this.testShapeBehaviorEquality(pair);
                                 //test random offsetting to test VoxelShapeAlignedCuboid_Offset
                                 double xOff = 5* rand.nextGaussian();
                                 double yOff = 4* rand.nextDouble();
                                 double zOff = rand.nextDouble();
-                                pair[0] = pair[0].offset(xOff, yOff, zOff);
-                                pair[1] = pair[1].offset(xOff, yOff, zOff);
+                                pair[0] = pair[0].withOffset(xOff, yOff, zOff);
+                                pair[1] = pair[1].withOffset(xOff, yOff, zOff);
                                 this.testShapeBehaviorEquality(pair);
                                 //test random EPSILON-sized deviations
-                                pair = getVanillaModdedVoxelShapePair(new Box(x/8D + 2E-7*this.rand.nextDouble(),y/8D + 4E-8,z/8D,x2/8D,y2/8D+9E-8,z2/8D));
+                                pair = getVanillaModdedVoxelShapePair(new AxisAlignedBB(x/8D + 2E-7*this.rand.nextDouble(),y/8D + 4E-8,z/8D,x2/8D,y2/8D+9E-8,z2/8D));
                                 this.testShapeBehaviorEquality(pair);
                             }
                         }
@@ -88,23 +89,23 @@ public class TestCustomVoxelShapesCollisions {
         }
         //test some random shapes, just in case there is a really stupid mistake somewhere
         for (int i = 0; i < 2000; i++) {
-            this.testShapeBehaviorEquality(getVanillaModdedVoxelShapePair(new Box(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian())));
+            this.testShapeBehaviorEquality(getVanillaModdedVoxelShapePair(new AxisAlignedBB(rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian(), rand.nextGaussian())));
         }
     }
 
-    public static Box getRandomBox(Random random) {
+    public static AxisAlignedBB getRandomBox(Random random) {
         double x1 = random.nextDouble() * 2;
         double y1 = random.nextDouble() * 2;
         double z1 = random.nextDouble() * 2;
-        return new Box(x1, y1, z1, 2*x1 + random.nextGaussian(), 2*y1 + random.nextGaussian(), 2*z1 * random.nextGaussian());
+        return new AxisAlignedBB(x1, y1, z1, 2*x1 + random.nextGaussian(), 2*y1 + random.nextGaussian(), 2*z1 * random.nextGaussian());
     }
 
     public void testShapeBehaviorEquality(VoxelShape[] pair) {
         for (Direction.Axis axis : AXES) {
             for (double maxDist : distances) {
-                for (Box box : boxes) {
-                    double resultVanilla = pair[0].calculateMaxDistance(axis, box, maxDist);
-                    double resultModded = pair[1].calculateMaxDistance(axis, box, maxDist);
+                for (AxisAlignedBB box : boxes) {
+                    double resultVanilla = pair[0].getAllowedOffset(axis, box, maxDist);
+                    double resultModded = pair[1].getAllowedOffset(axis, box, maxDist);
                     int collided = 0;
                     if (resultVanilla == maxDist) {
                         noCollision++;
@@ -136,7 +137,7 @@ public class TestCustomVoxelShapesCollisions {
         }
     }
 
-    public static VoxelShape[] getVanillaModdedVoxelShapePair(Box box) {
-        return new VoxelShape[]{VoxelShapes.cuboid(box), VoxelShapesMixin.cuboid(box)};
+    public static VoxelShape[] getVanillaModdedVoxelShapePair(AxisAlignedBB box) {
+        return new VoxelShape[]{VoxelShapes.create(box), VoxelShapesMixin.cuboid(box)};
     }
 }
