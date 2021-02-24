@@ -27,10 +27,12 @@ import java.util.function.Supplier;
 
 @Mixin(World.class)
 public abstract class WorldMixin implements IWorld {
+    /* lithium-forge: Minecraft Forge already has a performance patch for this field.
     @Mutable
     @Shadow
     @Final
     protected List<TileEntity> tileEntitiesToBeRemoved;
+     */
     @Shadow
     @Final
     public boolean isRemote;
@@ -63,7 +65,9 @@ public abstract class WorldMixin implements IWorld {
         this.blockEntities$lithium = new BlockEntityList(this.loadedTileEntityList, false);
         this.loadedTileEntityList = this.blockEntities$lithium;
 
+        /* lithium-forge: Minecraft Forge already has a performance patch for this field.
         this.tileEntitiesToBeRemoved = new HashedReferenceList<>(this.tileEntitiesToBeRemoved);
+         */
 
         this.pendingBlockEntities$lithium = new BlockEntityList(this.addedTileEntityList, true);
         this.addedTileEntityList = this.pendingBlockEntities$lithium;

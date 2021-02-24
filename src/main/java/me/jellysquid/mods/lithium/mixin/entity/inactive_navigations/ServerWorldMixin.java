@@ -83,7 +83,11 @@ public abstract class ServerWorldMixin extends World implements ServerWorldExten
     }
 
     @Redirect(
+            /* lithium-forge: Minecraft Forge replaces this method with their own, use that.
             method = "onEntityRemoved",
+             */
+            method = "removeEntityComplete",
+            remap = false,
             at = @At(
                     value = "INVOKE",
                     target = "Ljava/util/Set;remove(Ljava/lang/Object;)Z"

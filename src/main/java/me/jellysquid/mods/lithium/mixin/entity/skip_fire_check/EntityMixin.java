@@ -19,6 +19,8 @@ public abstract class EntityMixin {
     @Shadow
     protected abstract int getFireImmuneTicks();
 
+    /* lithium-forge: This doesn't apply, oddly Minecraft Forge doesn't have any patch here - so idk
+    // TODO: review this patch
     @Redirect(
             method = "move",
             at = @At(
@@ -34,4 +36,5 @@ public abstract class EntityMixin {
 
         return world.getStatesInArea(box);
     }
+     */
 }
